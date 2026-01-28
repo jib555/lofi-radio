@@ -1,95 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Radio nocturna</title>
+  <meta charset="UTF-8">
+  <title>♡ música japonesa para humanos nocturnos ♡</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: radial-gradient(circle at top, #1b1f3b, #070910);
-    color: #eaeaff;
-    font-family: system-ui, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at top, #1b1b2f, #0f0f1a);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      color: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .app {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(18px);
-    border-radius: 20px;
-    padding: 24px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,.5);
-  }
+    .radio {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px;
+      width: 320px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      text-align: center;
+    }
 
-  h1 {
-    font-size: 16px;
-    margin-bottom: 16px;
-    opacity: .9;
-  }
+    h1 {
+      font-size: 14px;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-bottom: 18px;
+    }
 
-  button {
-    width: 100%;
-    margin: 8px 0;
-    padding: 12px;
-    border-radius: 14px;
-    border: none;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-  }
+    .station {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: white;
+      padding: 14px;
+      width: 100%;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
 
-  button:hover {
-    background: rgba(255,255,255,0.25);
-  }
+    .station:active {
+      transform: scale(0.97);
+      background: rgba(255,255,255,0.15);
+    }
 
-  .status {
-    margin-top: 12px;
-    font-size: 12px;
-    opacity: .7;
-  }
-</style>
+    .status {
+      margin-top: 14px;
+      font-size: 12px;
+      opacity: 0.6;
+      height: 16px;
+      transition: opacity 0.4s ease;
+    }
+
+    .fade {
+      opacity: 0;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="app">
-  <h1>♡ música japonesa para humanos nocturnos ♡</h1>
+  <div class="radio">
+    <h1>♡ música japonesa para humanos nocturnos ♡</h1>
 
-  <button onclick="play('japanisu')">Japanisu</button>
-  <button onclick="play('listenjp')">Listen.moe J-Pop</button>
-  <button onclick="play('listenk')">Listen.moe K-Pop</button>
+    <button class="station"
+      onclick="playStation('listen.moe J-POP', 'https://listen.moe/stream')">
+      ▶ listen.moe · J-POP
+    </button>
 
-  <div class="status" id="status">en silencio</div>
-</div>
+    <button class="station"
+      onclick="playStation('listen.moe ANIME', 'https://listen.moe/anime/stream')">
+      ▶ listen.moe · ANIME
+    </button>
 
-<audio id="audio" crossorigin="anonymous"></audio>
+    <div id="status" class="status">silencio nocturno</div>
+  </div>
 
-<script>
-  const audio = document.getElementById("audio");
-  const status = document.getElementById("status");
+  <audio id="radio"></audio>
 
-  const stations = {
-    japanisu: "https://listen.japanisu.com/listen/japanisu/radio.mp3",
-    listenjp: "https://listen.moe/stream",
-    listenk: "https://listen.moe/kpop/stream"
-  };
+  <script>
+    const audio = document.getElementById("radio");
+    const status = document.getElementById("status");
+    let fadeInterval;
 
-  function play(key) {
-    audio.pause();
-    audio.src = stations[key];
-    audio.volume = 1;
+    function playStation(name, url) {
+      clearInterval(fadeInterval);
 
-    audio.play()
-      .then(() => status.textContent = "sonando • " + key)
-      .catch(() => status.textContent = "bloqueado por el navegador");
-  }
-</script>
+      status.classList.add("fade");
+      audio.pause();
+      audio.src = url;
+      audio.load();
+
+      audio.volume = 0;
+
+      audio.play().then(() => {
+        status.textContent = "sonando: " + name;
+        status.classList.remove("fade");
+
+        let v = 0;
+        fadeInterval = setInterval(() => {
+          v += 0.05;
+          audio.volume = v;
+          if (v >= 1) clearInterval(fadeInterval);
+        }, 100);
+
+      }).catch(err => {
+        status.textContent = "bloqueado por el navegador";
+        status.classList.remove("fade");
+        console.log(err);
+      });
+    }
+  </script>
 
 </body>
 </html>
