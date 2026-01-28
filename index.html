@@ -10,7 +10,6 @@
 
 <style>
 html, body {
-html, body {
   margin: 0;
   height: 100%;
   font-family: system-ui;
@@ -35,39 +34,43 @@ html, body {
   100% { background-position: 0% 50%; }
 }
 
-.app {
-  width: 320px;
-  padding: 22px;
-  border-radius: 24px;
-  background: rgba(255,255,255,0.10);
-  backdrop-filter: blur(22px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-  text-align: center;
-  animation: breathe 30s ease-in-out infinite;
+.player-glass {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(14px);
 }
 
-@keyframes breathe {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.01); }
-  100% { transform: scale(1); }
+audio {
+  width: 100%;
+  filter: invert(1) opacity(0.85);
 }
 
 button {
   width: 100%;
-  margin: 8px 0;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.16);
-  border: none;
+  margin: 10px 0;
+  padding: 14px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
   color: white;
+
+  backdrop-filter: blur(12px);
   cursor: pointer;
-  animation: glow 25s ease-in-out infinite;
+
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-@keyframes glow {
-  0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
-  50% { box-shadow: 0 0 18px rgba(180,200,255,0.25); }
-  100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+button:active {
+  transform: scale(0.98);
+}
+
+button:hover {
+  background: rgba(255,255,255,0.12);
 }
 </style>
 </head>
@@ -81,6 +84,7 @@ button {
   <button onclick="setStation('lofi')">🎧 LoFi Hip Hop</button>
   <button onclick="setStation('anime')">🌸 Anime Radio</button>
 
+  <div class="player-glass">
   <audio id="radio" controls></audio>
 </div>
 
