@@ -46,9 +46,15 @@ html, body {
 
 audio {
   width: 100%;
-  filter: invert(1) opacity(0.85);
+  height: 34px;
+  filter: invert(1) opacity(0.75);
+  border-radius: 12px;
 }
-
+  
+.spacer {
+  height: 8px;
+}
+  
 button {
   width: 100%;
   margin: 10px 0;
@@ -72,6 +78,18 @@ button:active {
 button:hover {
   background: rgba(255,255,255,0.12);
 }
+  -webkit-tap-highlight-color: transparent;
+  
+button:active {
+  background: rgba(255,255,255,0.14);
+}
+  
+h1 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
 </style>
 </head>
 
@@ -85,6 +103,7 @@ button:hover {
   <button onclick="setStation('anime')">🌸 Anime Radio</button>
 
   <div class="player-glass">
+  <div class="spacer"></div>
   <audio id="radio" controls></audio>
 </div>
 
