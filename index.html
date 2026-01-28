@@ -1,178 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lo-Fi Radio</title>
-  <link rel="Icon" href="Icon.png">
-<link rel="apple-touch-icon" href="icon.png">
+<meta charset="UTF-8">
+<title>Radio nocturna</title>
 
-  <style>
-    /* ===== BASE ===== */
-    html, body {
-      margin: 0;
-      height: 100%;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-      background: linear-gradient(
-        120deg,
-        #0f1226,
-        #1b1f3b,
-        #2a1f3d,
-        #151933
-      );
-      background-size: 400% 400%;
-      animation: slowDrift 60s ease-in-out infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-    }
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle at top, #1b1f3b, #070910);
+    color: #eaeaff;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    @keyframes slowDrift {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  .app {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 20px;
+    padding: 24px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+  }
 
-    /* ===== APP CARD ===== */
-    .app {
-      width: 320px;
-      padding: 22px;
-      border-radius: 26px;
-      background: rgba(255,255,255,0.10);
-      backdrop-filter: blur(22px);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-      text-align: center;
-      animation: breathe 30s ease-in-out infinite;
-    }
+  h1 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    opacity: .9;
+  }
 
-    @keyframes breathe {
-      0%   { transform: scale(1); }
-      50%  { transform: scale(1.01); }
-      100% { transform: scale(1); }
-    }
+  button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+  }
 
-    h1 {
-      font-size: 1.2rem;
-      font-weight: 500;
-      opacity: 0.85;
-      margin-bottom: 14px;
-    }
+  button:hover {
+    background: rgba(255,255,255,0.25);
+  }
 
-    /* ===== BUTTONS ===== */
-  .radio-btn {
-  padding: 14px 22px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.radio-btn:hover {
-  background: rgba(255,255,255,0.22);
-  box-shadow: 0 0 18px rgba(170,120,255,0.5);
-}
-    button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: white;
-      backdrop-filter: blur(12px);
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    button:hover {
-      background: rgba(255,255,255,0.12);
-    }
-
-    button:active {
-      transform: scale(0.98);
-      background: rgba(255,255,255,0.14);
-    }
-
-    /* ===== PLAYER ===== */
-    .player-glass {
-      margin-top: 14px;
-      padding: 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(14px);
-    }
-
-    audio {
-      width: 100%;
-      height: 34px;
-      filter: invert(1) opacity(0.75);
-      border-radius: 12px;
-    }
-
-    .spacer {
-      height: 8px;
-    }
-  </style>
+  .status {
+    margin-top: 12px;
+    font-size: 12px;
+    opacity: .7;
+  }
+</style>
 </head>
-
-  <script>
-function openRadio() {
-  window.open(
-    "https://player.streamerr.co/popup/v/790",
-    "radioPopup",
-    "width=380,height=620,resizable=yes,scrollbars=no"
-  );
-}
-</script>
-</body>
 
 <body>
 
-  <div class="app">
-    <h1>Lo-Fi Radio</h1>
+<div class="app">
+  <h1>♡ música japonesa para humanos nocturnos ♡</h1>
 
-    <button onclick="playStation('https://radio.plaza.one/mp3')">
-  🌃 Nightwave Plaza
-</button>
+  <button onclick="play('japanisu')">Japanisu</button>
+  <button onclick="play('listenjp')">Listen.moe J-Pop</button>
+  <button onclick="play('listenk')">Listen.moe K-Pop</button>
 
-<button onclick="playStation('https://listen.animeradio.su/animelofi')">
-  🌸 Anime Lo-Fi
-</button>
+  <div class="status" id="status">en silencio</div>
+</div>
 
-<button onclick="playStation('https://ice1.somafm.com/groovesalad-128-mp3')">
-  🌿 Groove Salad
-</button>
+<audio id="audio" crossorigin="anonymous"></audio>
 
-<button onclick="playStation('https://ice1.somafm.com/lush-128-mp3')">
-  🌙 Lush
-</button>
+<script>
+  const audio = document.getElementById("audio");
+  const status = document.getElementById("status");
 
-<button onclick="playStation('https://ice1.somafm.com/dronezone-128-mp3')">
-  ☁️ Drone Zone
-</button>
-    <div class="spacer"></div>
+  const stations = {
+    japanisu: "https://listen.japanisu.com/listen/japanisu/radio.mp3",
+    listenjp: "https://listen.moe/stream",
+    listenk: "https://listen.moe/kpop/stream"
+  };
 
-    <div class="player-glass">
-      <audio id="radio" controls></audio>
-    </div>
-  </div>
+  function play(key) {
+    audio.pause();
+    audio.src = stations[key];
+    audio.volume = 1;
 
-  <script>
-    const radio = document.getElementById("radio");
-
-    function playStation(url) {
-      radio.src = url;
-      radio.play();
-    }
-  </script>
+    audio.play()
+      .then(() => status.textContent = "sonando • " + key)
+      .catch(() => status.textContent = "bloqueado por el navegador");
+  }
+</script>
 
 </body>
 </html>
