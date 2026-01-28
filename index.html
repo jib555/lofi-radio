@@ -1,124 +1,154 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>♡ música japonesa para humanos nocturnos ♡</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>夜のラジオ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: radial-gradient(circle at top, #1b1b2f, #0f0f1a);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont;
-      color: #f2f2f2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+<style>
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #151515, #050505);
+  color: #eee;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
 
-    .radio {
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 24px;
-      width: 320px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      text-align: center;
-    }
+.player {
+  background: rgba(20,20,20,0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 24px;
+  width: 320px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.6);
+  text-align: center;
+}
 
-    h1 {
-      font-size: 14px;
-      font-weight: 400;
-      opacity: 0.8;
-      margin-bottom: 18px;
-    }
+.cover {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9acb, #7aa2ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  box-shadow: 0 0 30px rgba(255,154,203,.4);
+}
 
-    .station {
-      background: rgba(255,255,255,0.08);
-      border: none;
-      color: white;
-      padding: 14px;
-      width: 100%;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
-    }
+.title {
+  font-size: 14px;
+  opacity: .8;
+  margin-bottom: 12px;
+}
 
-    .station:active {
-      transform: scale(0.97);
-      background: rgba(255,255,255,0.15);
-    }
+.station {
+  font-size: 16px;
+  margin-bottom: 18px;
+}
 
-    .status {
-      margin-top: 14px;
-      font-size: 12px;
-      opacity: 0.6;
-      height: 16px;
-      transition: opacity 0.4s ease;
-    }
+.buttons button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: none;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+}
 
-    .fade {
-      opacity: 0;
-    }
-  </style>
+.buttons button:hover {
+  background: #333;
+}
+
+.buttons button:active {
+  transform: scale(0.98);
+}
+
+.footer {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: .6;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="radio">
-    <h1>♡ música japonesa para humanos nocturnos ♡</h1>
+<div class="player">
+  <div class="cover">♪</div>
 
-    <button class="station"
-      onclick="playStation('listen.moe J-POP', 'https://listen.moe/stream')">
-      ▶ listen.moe · J-POP
+  <div class="title">♡ música japonesa para humanos nocturnos ♡</div>
+  <div class="station" id="stationName">—</div>
+
+  <div class="buttons">
+    <button onclick="changeStation('Listen.moe J-POP', streams.listenMoe)">
+      listen.moe J-POP
     </button>
-
-    <button class="station"
-      onclick="playStation('listen.moe ANIME', 'https://listen.moe/anime/stream')">
-      ▶ listen.moe · ANIME
+    <button onclick="changeStation('Japanisu', streams.japanisu)">
+      Japanisu
     </button>
-
-    <div id="status" class="status">silencio nocturno</div>
+    <button onclick="changeStation('Anime MP3', streams.animeMp3)">
+      Anime MP3
+    </button>
   </div>
 
-  <audio id="radio"></audio>
+  <div class="footer">radio personal · sin anuncios · sin prisa</div>
+</div>
 
-  <script>
-    const audio = document.getElementById("radio");
-    const status = document.getElementById("status");
-    let fadeInterval;
+<audio id="audio" preload="none"></audio>
 
-    function playStation(name, url) {
-      clearInterval(fadeInterval);
+<script>
+const audio = document.getElementById("audio");
+audio.volume = 0;
 
-      status.classList.add("fade");
-      audio.pause();
-      audio.src = url;
-      audio.load();
+const streams = {
+  listenMoe: "https://listen.moe/stream",
+  japanisu: "https://listen.japanisu.com/listen/japanisu/radio.mp3",
+  animeMp3: "https://stream.animeradio.in:8000/radio.mp3"
+};
 
-      audio.volume = 0;
+let fading = false;
 
-      audio.play().then(() => {
-        status.textContent = "sonando: " + name;
-        status.classList.remove("fade");
+function fadeVolume(from, to, duration, callback) {
+  const steps = 20;
+  const stepTime = duration / steps;
+  let step = 0;
 
-        let v = 0;
-        fadeInterval = setInterval(() => {
-          v += 0.05;
-          audio.volume = v;
-          if (v >= 1) clearInterval(fadeInterval);
-        }, 100);
-
-      }).catch(err => {
-        status.textContent = "bloqueado por el navegador";
-        status.classList.remove("fade");
-        console.log(err);
-      });
+  const interval = setInterval(() => {
+    step++;
+    audio.volume = from + (to - from) * (step / steps);
+    if (step >= steps) {
+      clearInterval(interval);
+      if (callback) callback();
     }
-  </script>
+  }, stepTime);
+}
+
+function changeStation(name, url) {
+  if (fading) return;
+  fading = true;
+
+  document.getElementById("stationName").textContent = "cambiando…";
+
+  fadeVolume(audio.volume, 0, 600, () => {
+    audio.src = url;
+    audio.play().then(() => {
+      document.getElementById("stationName").textContent = name;
+      fadeVolume(0, 0.8, 800, () => fading = false);
+    }).catch(() => {
+      document.getElementById("stationName").textContent = "bloqueado por el navegador";
+      fading = false;
+    });
+  });
+}
+</script>
 
 </body>
 </html>
