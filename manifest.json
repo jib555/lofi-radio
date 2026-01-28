@@ -1,0 +1,8 @@
+{
+  "name": "Lo-Fi Radio",
+  "short_name": "Lo-Fi",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f1226",
+  "theme_color": "#0f1226"
+}
