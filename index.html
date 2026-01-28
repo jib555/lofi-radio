@@ -1,130 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lo-Fi Radio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lo-Fi Radio</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f1226">
+  <style>
+    /* ===== BASE ===== */
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+      background: linear-gradient(
+        120deg,
+        #0f1226,
+        #1b1f3b,
+        #2a1f3d,
+        #151933
+      );
+      background-size: 400% 400%;
+      animation: slowDrift 60s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
 
-<style>
-html, body {
-  margin: 0;
-  height: 100%;
-  font-family: system-ui;
-  background: linear-gradient(
-    120deg,
-    #0f1226,
-    #1b1f3b,
-    #2a1f3d,
-    #151933
-  );
-  background-size: 400% 400%;
-  animation: slowDrift 60s ease-in-out infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-}
+    @keyframes slowDrift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-@keyframes slowDrift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+    /* ===== APP CARD ===== */
+    .app {
+      width: 320px;
+      padding: 22px;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.10);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+      text-align: center;
+      animation: breathe 30s ease-in-out infinite;
+    }
 
-.player-glass {
-  margin-top: 14px;
-  padding: 10px;
-  border-radius: 18px;
+    @keyframes breathe {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.01); }
+      100% { transform: scale(1); }
+    }
 
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(14px);
-}
+    h1 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      opacity: 0.85;
+      margin-bottom: 14px;
+    }
 
-audio {
-  width: 100%;
-  height: 34px;
-  filter: invert(1) opacity(0.75);
-  border-radius: 12px;
-}
-  
-.spacer {
-  height: 8px;
-}
-  
-button {
-  width: 100%;
-  margin: 10px 0;
-  padding: 14px;
-  border-radius: 18px;
+    /* ===== BUTTONS ===== */
+    button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: white;
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
 
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: white;
+    button:hover {
+      background: rgba(255,255,255,0.12);
+    }
 
-  backdrop-filter: blur(12px);
-  cursor: pointer;
+    button:active {
+      transform: scale(0.98);
+      background: rgba(255,255,255,0.14);
+    }
 
-  transition: background 0.3s ease, transform 0.2s ease;
-}
+    /* ===== PLAYER ===== */
+    .player-glass {
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(14px);
+    }
 
-button:active {
-  transform: scale(0.98);
-}
+    audio {
+      width: 100%;
+      height: 34px;
+      filter: invert(1) opacity(0.75);
+      border-radius: 12px;
+    }
 
-button:hover {
-  background: rgba(255,255,255,0.12);
-}
-  -webkit-tap-highlight-color: transparent;
-  
-button:active {
-  background: rgba(255,255,255,0.14);
-}
-  
-h1 {
-  font-size: 1.2rem;
-  font-weight: 500;
-  opacity: 0.85;
-  margin-bottom: 12px;
-}
-</style>
+    .spacer {
+      height: 8px;
+    }
+  </style>
 </head>
 
 <body>
-<div class="app">
-  <h1>🌙 Lo-Fi Radio</h1>
-  <div id="stationName"></div>
 
-  <button onclick="setStation('nightwave')">🌌 Nightwave Plaza</button>
-  <button onclick="setStation('lofi')">🎧 LoFi Hip Hop</button>
-  <button onclick="setStation('anime')">🌸 Anime Radio</button>
+  <div class="app">
+    <h1>Lo-Fi Radio</h1>
 
-  <div class="player-glass">
-  <div class="spacer"></div>
-  <audio id="radio" controls></audio>
-</div>
+    <button onclick="playStation('https://radio.plaza.one/mp3')">
+      Nightwave Plaza
+    </button>
 
-<script>
-const radio = document.getElementById("radio");
-const stationName = document.getElementById("stationName");
+    <button onclick="playStation('https://listen.animeradio.su/animelofi')">
+      Anime Lo-Fi
+    </button>
 
-const stations = {
-  nightwave: { name: "Nightwave Plaza", url: "https://radio.plaza.one/mp3" },
-  lofi: { name: "LoFi Hip Hop", url: "https://stream.lofiradio.com/lofi.mp3" },
-  anime: { name: "Anime Radio", url: "https://listen.moe/stream" }
-};
+    <div class="spacer"></div>
 
-function setStation(key) {
-  radio.src = stations[key].url;
-  stationName.textContent = stations[key].name;
-  localStorage.setItem("station", key);
-  radio.play();
-}
+    <div class="player-glass">
+      <audio id="radio" controls></audio>
+    </div>
+  </div>
 
-setStation(localStorage.getItem("station") || "nightwave");
-</script>
+  <script>
+    const radio = document.getElementById("radio");
+
+    function playStation(url) {
+      radio.src = url;
+      radio.play();
+    }
+  </script>
+
 </body>
 </html>
